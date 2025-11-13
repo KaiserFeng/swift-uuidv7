@@ -1,102 +1,35 @@
-// swift-tools-version: 6.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version:5.7
 import PackageDescription
 
 let package = Package(
-  name: "swift-uuidv7",
-  platforms: [.iOS(.v13), .macOS(.v10_15), .tvOS(.v13), .watchOS(.v7), .macCatalyst(.v13)],
-  products: [.library(name: "UUIDV7", targets: ["UUIDV7"])],
-  traits: [
-    .trait(
-      name: "SwiftUUIDV7Tagged",
-      description: "Adds integrated swift-tagged support to the UUIDV7 type."
-    ),
-    .trait(
-      name: "SwiftUUIDV7StructuredQueries",
-      description:
-        "Adds swift-structured-queries support and column representations to the UUIDV7 type."
-    ),
-    .trait(
-      name: "SwiftUUIDV7GRDB",
-      description: """
-        Conforms UUIDV7 to GRDB's DatabaseValueConvertible and StatementColumnConvertible \
-        protocols, and adds database functions to generate, parse, and extract data from UUIDV7s.
-        """
-    ),
-    .trait(
-      name: "SwiftUUIDV7SQLiteData",
-      description: """
-        Conforms UUIDV7 to IdentifierStringConvertible to make it compatible with CloudKit sync.
-
-        This trait also enables SwiftUUIDV7GRDB and SwiftUUIDV7StructuredQueries.
-        """,
-      enabledTraits: ["SwiftUUIDV7GRDB", "SwiftUUIDV7StructuredQueries"]
-    ),
-    .trait(
-      name: "SwiftUUIDV7Dependencies",
-      description:
-        """
-        Adds a dependency value to generate UUIDV7s, and interops the base UUID dependency with \
-        UUIDV7 generation.
-        """
-    )
-  ],
-  dependencies: [
-    .package(url: "https://github.com/groue/GRDB.swift", from: "7.5.0"),
-    .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
-    .package(
-      url: "https://github.com/pointfreeco/swift-structured-queries",
-      from: "0.19.0",
-      traits: [
-        .trait(name: "StructuredQueriesTagged", condition: .when(traits: ["SwiftUUIDV7Tagged"]))
-      ]
-    ),
-    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
-    .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
-    .package(
-      url: "https://github.com/pointfreeco/sqlite-data",
-      from: "1.0.0",
-      traits: [.trait(name: "SQLiteDataTagged", condition: .when(traits: ["SwiftUUIDV7Tagged"]))]
-    )
-  ],
-  targets: [
-    .target(
-      name: "UUIDV7",
-      dependencies: [
-        .product(
-          name: "GRDB",
-          package: "GRDB.swift",
-          condition: .when(traits: ["SwiftUUIDV7GRDB"])
-        ),
-        .product(
-          name: "Tagged",
-          package: "swift-tagged",
-          condition: .when(traits: ["SwiftUUIDV7Tagged"])
-        ),
-        .product(
-          name: "StructuredQueriesCore",
-          package: "swift-structured-queries",
-          condition: .when(traits: ["SwiftUUIDV7StructuredQueries"])
-        ),
-        .product(
-          name: "StructuredQueriesSQLiteCore",
-          package: "swift-structured-queries",
-          condition: .when(traits: ["SwiftUUIDV7StructuredQueries"])
-        ),
-        .product(
-          name: "Dependencies",
-          package: "swift-dependencies",
-          condition: .when(traits: ["SwiftUUIDV7Dependencies"])
-        ),
-        .product(
-          name: "SQLiteData",
-          package: "sqlite-data",
-          condition: .when(traits: ["SwiftUUIDV7SQLiteData"])
+    name: "swift-uuidv7",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .watchOS(.v6)
+    ],
+    products: [
+        .library(
+            name: "UUIDv7",
+            type: .dynamic,
+            targets: ["UUIDv7"]
         )
-      ]
-    ),
-    .testTarget(name: "UUIDV7Tests", dependencies: ["UUIDV7"])
-  ],
-  swiftLanguageModes: [.v6]
+    ],
+    dependencies: [
+        // 已裁剪：不再声明任何外部依赖（移除了 GRUD 等）
+    ],
+    targets: [
+        .target(
+            name: "UUIDv7",
+            path: "Sources/UUIDv7",
+            exclude: []
+        ),
+        .testTarget(
+            name: "UUIDv7Tests",
+            dependencies: ["UUIDv7"],
+            path: "Tests/UUIDv7Tests"
+        )
+    ],
+    swiftLanguageVersions: [.v5]
 )
